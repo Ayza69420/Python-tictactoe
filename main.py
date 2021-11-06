@@ -4,8 +4,9 @@ from colorama import Fore as FORE
 
 class tictactoe:
     def __init__(self):
-        self.board = ['-' for _ in range(10)]
+        self.board = ['-' for _ in range(9)]
         self.turn = 'X'
+        self.msg = ''
         self.playing = True
 
     def change_turn(self):
@@ -25,11 +26,11 @@ class tictactoe:
     def display_board(self):
         print(
 f'''  
-{'='*(len(self.board)-1)}
+{'='*(len(self.board))}
 {self.board[0]} | {self.board[1]} | {self.board[2]}
 {self.board[3]} | {self.board[4]} | {self.board[5]}
 {self.board[6]} | {self.board[7]} | {self.board[8]}
-{'='*(len(self.board)-1)}
+{'='*(len(self.board))}
 '''
 )
 
@@ -45,7 +46,12 @@ f'''
         try:
             self.board[index-1] = self.turn
         except IndexError:
-            print('Input a valid index.')
+            self.msg = ('Input a valid index.')
+
+    def tie_check(self):
+        if '-' not in self.board and not self.win_check():
+            return True
+        return False
 
     def player_input(self):
         colors = [FORE.BLUE,FORE.CYAN,FORE.GREEN,FORE.LIGHTRED_EX,FORE.LIGHTMAGENTA_EX]
@@ -56,28 +62,37 @@ f'''
         while self.playing:
             system('cls')
 
+            print(self.msg)
+            self.msg = ''
+
             self.display_board()
 
-            place = self.player_input()
+            if self.tie_check():
+                print('It was a tie.')
+                self.playing = False
+            else:
+                place = self.player_input()
 
             try:
                 available = self.check_for_availbility(int(place))
                 if available:
                     self.change_index(int(place))
+                    self.change_turn()
+
                 elif not available:
-                    print('That place is already taken.')
+                    self.msg = ('That place is already taken.')
                 else:
-                    print(available)
+                    self.msg = available
+                    self.turn = self.turn
 
                 if self.win_check():
                     print(f'{self.turn} has won the game!')
-                    self.playing = False
-                    
-                self.change_turn()
+                    self.playing = False    
+                
                 continue
 
             except ValueError:
-                print('Input an integer')
+                self.msg = ('Input an integer')
                 continue
 
 game = tictactoe()

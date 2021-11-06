@@ -77,7 +77,6 @@ f'''
                 available = self.check_for_availbility(int(place))
                 if available:
                     self.change_index(int(place))
-                    self.change_turn()
 
                 elif not available:
                     self.msg = ('That place is already taken.')
@@ -87,8 +86,10 @@ f'''
 
                 if self.win_check():
                     print(f'{self.turn} has won the game!')
-                    self.playing = False    
-                
+                    self.playing = False  
+                else:
+                    self.change_turn()
+                    
                 continue
 
             except ValueError:
